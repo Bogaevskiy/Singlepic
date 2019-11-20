@@ -1,0 +1,35 @@
+{% extends "general/base_general.html" %}
+
+{% block title %}
+	New User Creation
+{% endblock %}
+
+{% block content %}
+		
+	<div class="card text-center card-bordered col-sm-4 col-center">  
+		<div class="card-body">
+			<h3 class="card-title"><b><h1>Welcome</h1></b></h3>
+			<form action="{% url 'new_user_url' %}" method="post">
+				{% csrf_token %}
+
+				{% for field in form %}			
+				<div class = "form-group">
+					{% if field.errors %}
+					<div class="alert alert-danger">
+						{{ field.errors }}
+					</div>
+					{% endif %}
+
+					{{ field.label }}<br>
+					{{ field }}
+				</div>
+				{% endfor %}
+
+				<button type = "Submit" class ="btn btn-dark">Sign in</button>
+				<a href="{% url 'pics_list_url' %}" class="btn btn-dark">Back to main</a>
+			</form>
+
+		</div>
+	</div>
+
+{% endblock	%}

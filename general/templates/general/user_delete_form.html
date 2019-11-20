@@ -1,0 +1,32 @@
+{% extends "general/base_general.html" %}
+
+{% block title %}
+	Deleting {{ user.username }}
+{% endblock %}
+
+{% block content %}
+
+	<div class="card text-center card-bordered col-sm-4 col-center">  
+		<div class="card-body">
+			<h3 class="card-title"><b>Deleting your account?</b></h3>
+			<h4 class="card-title">Are you sure?</h4>
+			<form action="{% url 'user_delete_url' username=user.username %}" method="post">
+				{% csrf_token %}
+				{% for field in form %}			
+				{% if field.errors %}
+				<div class="alert alert-danger">
+					{{ field.errors }}
+				</div>
+				{% endif %}
+				<div class = "form-group">
+					{{ field.label }}<br>
+					{{ field }}
+				</div>
+				{% endfor %}
+				<button type = "Submit" class="btn btn-danger">Yes, I am sure</button>
+				<a href="{% url 'pics_list_url' %}" class="btn btn-dark">Back to main</a>
+			</form>
+		</div>
+	</div>
+	
+{% endblock	%}

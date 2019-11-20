@@ -1,0 +1,32 @@
+{% extends "general/base_general.html" %}
+
+{% block title %}
+	User Edit
+{% endblock %}
+
+{% block content %}
+	
+	<div class="card text-center card-bordered col-sm-4 col-center">  
+		<div class="card-body">
+			<h3 class="card-title"><b>Something to edit?</b></h3>
+			<form action="{% url 'user_edit_url' username=user.username %}" method="post">
+				{% csrf_token %}
+				{% for field in form %}			
+				{% if field.errors %}
+				<div class="alert alert-danger">
+					{{ field.errors }}
+				</div>
+				{% endif %}
+				<div class = "form-group">
+					{{ field.label }}
+					{{ field }}
+				</div>
+				{% endfor %}
+				<button type = "Submit" class ="btn btn-dark">Save</button>
+				<a href="{% url 'user_detail_url' username=user.username %}" class="btn btn-dark">Back to main</a>
+			</form>
+
+		</div>
+	</div>
+
+{% endblock	%}

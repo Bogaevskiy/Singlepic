@@ -1,0 +1,42 @@
+{% extends "general/base_general.html" %}
+
+{% block title %}
+	{{ user.username }}
+{% endblock %}
+
+
+{% block content %}
+
+<div class="card text-center card-bordered col-sm-6 col-center">  
+  <div class="card-body">
+    <h3 class="card-title"><b>{{ user.username }}</b></h3>
+    <p class="card-text">{{ user.email }}</p>
+    {% if user.user_add.description %}
+    	<p class="card-text">"{{ user.user_add.description }}"</p>
+    {% endif %}
+    <p class="card-text">Pics added - {{ user.user_add.counter }}</p>
+    <p class="card-text">Created - {{ user.date_joined }}</p>
+    <p class="card-text">Last login - {{ user.last_login }}</p>
+    {% if user.photo %}
+    	<p class="card-text">{{ user.username }} has uploaded pic - 
+    		<a href="{% url 'pic_detail_url' id=user.photo.id %}"><b>{{ user.photo.title }}</b></a></p>
+    {% endif %}    
+    <a href="{% url 'pics_list_url' %}" class="btn btn-dark">Back to main</a>
+  </div>  
+  {% if user == request.user %}
+	  <div class="card-footer text-muted">
+	    <br>
+	    <p><a href="{% url 'user_edit_url' username=user.username %}" class="btn btn-dark btn-sm">Edit account</a>
+			<a href="{% url 'user_delete_url' username=user.username %}" class="btn btn-dark btn-sm">Delete account</a></p>
+	  </div>
+  {% endif %}
+  
+  {% if request.user.is_authenticated and request.user.is_staff  %}
+  	<div class="card-footer text-muted">
+  		<a href="{% url 'admin_delete_pic_url' username=user.username %}" class="btn btn-warning btn-sm">Admin-Delete</a>
+  	</div>
+  {% endif %}
+</div>
+
+
+{% endblock	%}

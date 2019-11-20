@@ -1,0 +1,103 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang = "en">
+<head>
+	<meta charset = "UTF-8">
+	<meta name = "viewport" content = "width=device-width", initial-scale = 1.0>
+	<meta http-equiv = "X-UA-Compatible" content = "ie=edge">
+
+	<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+
+	<link rel="stylesheet" type="text/css" href="{% static 'css/style1.css' %}">
+
+	<title>
+		{% block title %}
+			Singlepic
+		{% endblock %}		
+	</title>
+</head>
+
+<body>
+	<nav class="navbar navbar-expand-lg navbar-dark bg-dark ">
+		<a class="navbar-brand" href="{% url 'pics_list_url' %}">Singlepic</a>
+		<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavDropdown" aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
+			<span class="navbar-toggler-icon"></span>
+		</button>
+		<div class="collapse navbar-collapse justify-content-end" id="navbarNavDropdown">	
+			{% if request.user.username %}
+				<font color = red>{{ request.user.username }}</font>
+			{% else %}
+				<font color = red>Nobody</font>
+			{% endif %}		
+			<ul class="navbar-nav">
+				<li>
+					{% if request.user.is_authenticated and request.user.is_staff  %}
+						<button type="button" class="btn btn-dark admin-obj dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+							Admin-menu
+						</button>
+						<div class="dropdown-menu dropdown-menu-right">
+							<button class="dropdown-item" type="button">
+								<a class="nav-link" href="/admin">Admin panel</a>
+							</button>
+							<button class="dropdown-item" type="button">
+								<a class="nav-link" href="{% url 'admin_users_list_url' %}">Users</a>
+							</button>
+							<button class="dropdown-item" type="button">
+								<a class="nav-link" href="{% url 'admin_pics_list_url' %}">Pics</a>
+							</button>
+						</div>
+					{% endif %}
+					<div class="btn-group">
+						<button type="button" class="btn btn-dark dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+							Menu
+						</button>
+						<div class="dropdown-menu dropdown-menu-right">
+							<button class="dropdown-item" type="button">
+								<a class="nav-link" href="{% url 'users_list_url' %}">Users list</a>
+							</button>
+							<button class="dropdown-item" type="button">
+								<a class="nav-link" href="{% url 'pics_list_url' %}">Pics list</a>
+							</button>
+							{% if request.user.username %}
+								<button class="dropdown-item" type="button">
+									<a class="nav-link" href="{% url 'user_logout_url' %}">Logout</a>
+								</button>
+								<button class="dropdown-item" type="button">
+									<a class="nav-link" href="{% url 'photo_upload_url' %}">Upload</a>
+								</button>
+							{% else %}
+								<button class="dropdown-item" type="button">
+									<a class="nav-link" href="{% url 'new_user_url' %}">Create user</a>
+								</button>
+								<button class="dropdown-item" type="button">
+									<a class="nav-link" href="{% url 'user_login_url' %}">Login</a>
+								</button>
+							{% endif %}							
+						</div>
+					</div>
+				</li>
+
+			</ul>
+		</div>
+	</nav>
+
+	<div class="container-fluid container-custom clearfix">		
+			{% block content %}
+				There is no content here for you, maybe, something went wrong
+			{% endblock	%}		
+	</div>
+
+	{% if request.user.is_authenticated and request.user.is_staff  %}
+		<div class="admin-panel">
+			<a href="/admin">Admin</a>
+			{% block admin-panel %}{% endblock %}
+		</div>
+	{% endif %}
+
+</body>
+
+</html>

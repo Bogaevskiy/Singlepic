@@ -1,0 +1,39 @@
+{% extends "general/base_general.html" %}
+
+{% block title %}
+	Pics
+{% endblock %}
+
+
+{% block content %}	
+
+  <form action="{% url 'admin_pics_list_url' %}" method="post">
+    {% csrf_token %}
+    {% for field in form %}     
+        {% if field.errors %}
+        <div class="alert alert-danger">
+          {{ field.errors }}
+        </div>
+        {% endif %}
+        <div class = "form-group">
+          {{ field.label }}  
+          {{ field }}
+          <button type = "Submit" class ="btn btn-dark btn-sm admin-obj">Search</button>
+          {% if post %}
+            <a href="{% url 'admin_pics_list_url' %}" class="btn btn-dark btn-sm admin-obj">Full list</a>
+          {% endif %}
+          <br>        
+        </div>   
+    {% endfor %}       
+  </form>
+
+	<ul class="list-group list-group-flush">
+  		{% for photo in photos %}
+  			<li class="list-group-item"><b>{{ photo.title }}</b>, 
+  									posted by {{ photo.user.username }}
+  									<a href="{% url 'admin_delete_pic_url' id=photo.id %}"> <b>DELETE</b> </a>
+  									 </li>
+  		{% endfor %}
+  	</ul>
+
+{% endblock %}

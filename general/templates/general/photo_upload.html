@@ -1,0 +1,32 @@
+{% extends "general/base_general.html" %}
+
+{% block title %}
+	Uploading photo
+{% endblock %}
+
+{% block content %}
+
+	<div class="card text-center card-bordered col-sm-4 col-center">  
+		<div class="card-body">
+			<h3 class="card-title"><b>Anything to upload?</b></h3>
+			<form action="{% url 'photo_upload_url' %}", method="post" enctype="multipart/form-data" >				
+				{% csrf_token %}
+				{% for field in form %}			
+				{% if field.errors %}
+				<div class="alert alert-danger">
+					{{ field.errors }}
+				</div>
+				{% endif %}
+				<div class = "form-group">
+					{{ field.label }}<br>
+					{{ field }}
+					<br>				
+				</div>
+				{% endfor %}
+				<button type = "Submit" class ="btn btn-dark">Upload</button>
+				<a href="{% url 'pics_list_url' %}" class="btn btn-dark">Back to main</a>
+			</form>	
+		</div>
+	</div>
+
+{% endblock	%}

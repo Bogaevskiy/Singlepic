@@ -1,0 +1,29 @@
+{% extends "general/base_general.html" %}
+
+{% block title %}
+	{{ photo.title }}
+{% endblock %}
+
+
+{% block content %}
+
+<div class="col-sm-7 col-center">
+	<div class="card photo-card card-bordered">
+	  <img class="card-img-top" src="{{ photo.file.url }}" alt="{{ photo.title }}">
+	  <div class="card-body">
+	    <h5 class="card-title">{{ photo.title }}</h5>
+	    <p class="card-text"><p> {{ photo.description }} </p>
+	    <p class="card-text"><p> Posted by <a href="{% url 'user_detail_url' username=photo.user.username %}">{{ photo.user.username }}</a>
+	    {% if request.user == photo.user %}
+	    	<a href="{% url 'pic_delete_url' id=photo.id %}" class="btn btn-danger btn-sm btn-del">Delete pic</a>
+	    {% endif %}	    
+	  </div></p>
+	  {% if request.user.is_authenticated and request.user.is_staff  %}
+  		<div class="card-footer text-muted">
+  			<a href="{% url 'admin_delete_pic_url' id=photo.id %}" class="btn btn-warning btn-sm">Admin-Delete</a>
+  		</div>
+  {% endif %}
+	</div>
+</div>
+
+{% endblock	%}

@@ -1,0 +1,74 @@
+.container-custom {
+	padding-top: 15px;
+	padding-bottom: 15px;	
+	background: #dddddd;
+	/*align-items: center;*/
+	/*text-align: center;*/
+	min-height: 100vh;
+	justify-content: center;
+}
+
+.col-sm-3 {
+	padding-top: 15px;
+	padding-bottom: 15px;
+}
+
+.col-center {
+	margin-left: auto;
+	margin-right: auto;
+}
+
+.dropdown-menu {
+  background-color: #343a40;
+}
+
+.dropdown-item:hover {
+	background-color: black;
+}
+
+.card-img-top {
+	border-bottom: 2px solid #343a40;
+}
+
+.card-bordered {
+	border: 2px solid #343a40;
+}
+
+.btn-del {
+	opacity: 0.4;
+	float: right;
+}
+
+.btn-del:hover {
+	opacity: 1;
+}
+
+.ghost-text {
+	color: rgba(0, 0, 0, 0.1);
+}
+
+.ghost-text:hover {
+	color: black
+}
+
+.about-text {
+	line-height: 85%;
+}
+
+.admin-panel {
+	border: 1px solid #343a40;
+	border-radius: 5px;
+	position: fixed;
+	right: 50px;
+	bottom: 30px;
+	opacity: 0.4;
+	padding: 15px;
+}
+
+.admin-panel:hover {
+	opacity: 1;
+}
+
+.admin-obj {
+	border: 2px solid #ffc107;
+}

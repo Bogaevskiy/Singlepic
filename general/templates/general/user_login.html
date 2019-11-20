@@ -1,0 +1,34 @@
+{% extends "general/base_general.html" %}
+
+{% block title %}
+	Logging in
+{% endblock %}
+
+{% block content %}
+	
+	<div class="card text-center card-bordered col-sm-4 col-center">  
+		<div class="card-body">
+			<h3 class="card-title"><b><h1>Welcome back</h1></b></h3>
+			<form action="{% url 'user_login_url' %}" method="post">
+				{% csrf_token %}
+
+				{% for field in form %}			
+				<div class = "form-group">
+					{% if field.errors %}
+					<div class="alert alert-danger">
+						{{ field.errors }}
+					</div>
+					{% endif %}
+
+					{{ field.label }}<br>
+					{{ field }}
+				</div>
+				{% endfor %}
+		
+		<button type = "Submit" class = 'btn btn-dark'>Login</button>
+		<a href="{% url 'pics_list_url' %}" class="btn btn-dark">Back to main</a>
+	</form>
+		</div>
+	</div>
+
+{% endblock	%}

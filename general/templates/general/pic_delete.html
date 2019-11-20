@@ -1,0 +1,28 @@
+{% extends "general/base_general.html" %}
+
+{% block title %}
+	Deleting {{ photo.title }}
+{% endblock %}
+
+{% block content %}	
+	<div class="card text-center card-bordered col-sm-4 col-center">  
+		<div class="card-body">
+			<h3 class="card-title"><b>Delete your pic?</b></h3>
+			<h4 class="card-title">It is irreversible</h4>
+			<form action="{% url 'pic_delete_url' id=photo.id %}" method="post">
+				{% csrf_token %}
+				{% for field in form %}			
+				{% if field.errors %}
+				<div class="alert alert-danger">
+					{{ field.errors }}
+				</div>
+				{% endif %}			
+				{% endfor %}
+				<button type = "Submit" class ="btn btn-danger">Yes, delete it</button>
+				<a href="{% url 'pic_detail_url' id=photo.id %}" class='btn btn-dark'>No, get back</a>
+			</form>
+
+		</div>
+	</div>
+
+{% endblock	%}
