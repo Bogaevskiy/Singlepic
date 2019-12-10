@@ -2,10 +2,9 @@
 	padding-top: 15px;
 	padding-bottom: 15px;	
 	background: #dddddd;
-	/*align-items: center;*/
-	/*text-align: center;*/
 	min-height: 100vh;
 	justify-content: center;
+	text-align: center;
 }
 
 .col-sm-3 {
@@ -16,6 +15,11 @@
 .col-center {
 	margin-left: auto;
 	margin-right: auto;
+}
+
+.card-padding {
+	padding-top: 15px;
+	padding-bottom: 15px;;
 }
 
 .dropdown-menu {
@@ -37,6 +41,11 @@
 .btn-del {
 	opacity: 0.4;
 	float: right;
+}
+
+.btn-pad {
+	margin-top: : 3px;
+	margin-bottom: 3px;
 }
 
 .btn-del:hover {
@@ -71,4 +80,9 @@
 
 .admin-obj {
 	border: 2px solid #ffc107;
+}
+
+.pagination {
+	margin-left: auto;
+	margin-right: auto;
 }

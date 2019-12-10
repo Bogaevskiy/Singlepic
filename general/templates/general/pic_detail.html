@@ -1,4 +1,5 @@
 {% extends "general/base_general.html" %}
+{% load staticfiles %}
 
 {% block title %}
 	{{ photo.title }}
@@ -7,22 +8,108 @@
 
 {% block content %}
 
-<div class="col-sm-7 col-center">
+
+
+<div class="col-sm-7 col-center  card-padding">
 	<div class="card photo-card card-bordered">
-	  <img class="card-img-top" src="{{ photo.file.url }}" alt="{{ photo.title }}">
-	  <div class="card-body">
-	    <h5 class="card-title">{{ photo.title }}</h5>
-	    <p class="card-text"><p> {{ photo.description }} </p>
-	    <p class="card-text"><p> Posted by <a href="{% url 'user_detail_url' username=photo.user.username %}">{{ photo.user.username }}</a>
-	    {% if request.user == photo.user %}
-	    	<a href="{% url 'pic_delete_url' id=photo.id %}" class="btn btn-danger btn-sm btn-del">Delete pic</a>
-	    {% endif %}	    
-	  </div></p>
-	  {% if request.user.is_authenticated and request.user.is_staff  %}
-  		<div class="card-footer text-muted">
-  			<a href="{% url 'admin_delete_pic_url' id=photo.id %}" class="btn btn-warning btn-sm">Admin-Delete</a>
-  		</div>
-  {% endif %}
+
+		{% if photo.blocked %}
+			{% if request.user.is_authenticated and request.user.is_staff %}		
+				<img class="card-img-top" src="{{ photo.file.url }}" alt="{{ photo.title }}">
+				<h3><b>(This picture is blocked)</b></h3>
+			{% else %}
+				<img class="card-img-top" src="{% static 'img/Blocked.png' %}" alt="Image-block">
+			{% endif %}
+		{% else %}
+			<img class="card-img-top" src="{{ photo.file.url }}" alt="{{ photo.title }}">
+		{% endif %}
+
+		<div class="card-body">
+			<h5 class="card-title">{{ photo.title }}</h5>
+			<p class="card-text"><p> {{ photo.description }} </p>
+			<p class="card-text"><p> Posted by <a href="{% url 'user_detail_url' username=photo.user.username %}">{{ photo.user.username }}</a>
+				<p>{{ counter }} likes</p>
+				{% if request.user.is_authenticated and request.user != photo.user %}
+				{% if like_exist %}
+				<a href="{% url 'photo_dislike_url' id=photo.id %}" class="btn btn-dark btn-sm">Dislike</a>
+				{% else %}
+				<a href="{% url 'photo_like_url' id=photo.id %}" class="btn btn-dark btn-sm">Like</a>
+				{% endif %}
+				{% endif %}
+				{% if request.user == photo.user %}
+				<a href="{% url 'pic_delete_url' id=photo.id %}" class="btn btn-danger btn-sm btn-del">Delete pic</a>
+				{% endif %}	    
+			</div></p>
+			{% if request.user.is_authenticated and request.user.is_staff  %}
+			<div class="card-footer text-muted">
+				<a href="{% url 'admin_delete_pic_url' id=photo.id %}" class="btn btn-warning btn-sm">Admin-Delete</a>
+				{% if photo.blocked %}
+					<a href="{% url 'admin_block_pic_url' id=photo.id %}" class="btn btn-warning btn-sm">Admin-Unblock</a>
+				{% else %}
+					<a href="{% url 'admin_block_pic_url' id=photo.id %}" class="btn btn-warning btn-sm">Admin-Block</a>
+				{% endif %}
+			</div>
+			{% endif %}
+		</div>
+	</div>
+
+<div class="col-sm-5 col-center card-padding">
+	<div class="card card-bordered card-padding">
+
+		{% for comment in comments %}
+			<p>
+				<b><a href="{% url 'user_detail_url' username=comment.user.username %}">{{ comment.user.username }}</a></b>:
+				{% if request.user.is_authenticated and request.user.is_staff %}
+
+					{{ comment.body }}
+						{% if comment.blocked %}
+							<i>(blocked)</i>
+						{% endif %}
+
+				{% else %}
+
+					{% if comment.blocked %}
+						<i>({{ block_message }})</i>					
+					{% else %}
+						{{ comment.body }}					
+					{% endif %}
+
+				{% endif %}
+				
+				{% if request.user.is_authenticated and request.user.is_staff %}
+					<b>(</b>
+					{% if not comment.blocked %}
+						<a href="{% url 'admin_block_comment' pic_id=photo.id comm_id=comment.id %}">
+							<font color = red >Block</font> 
+						</a>
+					{% else %}
+						<a href="{% url 'admin_block_comment' pic_id=photo.id comm_id=comment.id %}">
+							<font color = red >Unblock</font>
+						</a>
+					{% endif %}
+					
+					<a href="{% url 'admin_delete_comment' pic_id=photo.id comm_id=comment.id %}" ><font color = red >Del</font></a>
+					<b>)</b>
+				{% endif %}
+
+			</p>
+		{% endfor %}
+
+		<form action="{% url 'pic_detail_url' id=photo.id %}", method="post" enctype="multipart/form-data" >
+			{% csrf_token %}
+				{% for field in form %}			
+				{% if field.errors %}
+				<div class="alert alert-danger">
+					{{ field.errors }}
+				</div>
+				{% endif %}
+				<div class = "form-group">
+					{{ field.label }}
+					{{ field }}
+					<button type = "Submit" class ="btn btn-dark btn-sm">Say!</button>			
+				</div>
+				{% endfor %}				
+		</form>
 	</div>
 </div>
 

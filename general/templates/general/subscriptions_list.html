@@ -1,0 +1,57 @@
+{% extends "general/base_general.html" %}
+
+{% block title %}
+	Your subscriptions
+{% endblock %}
+
+
+{% block content %}
+
+{% if subscriptions.count %}
+  
+  <h3>Your subscriptions</h3><br>
+  {% for sub in subscriptions %}
+
+  <div class = "row">
+  <div class="col-sm-3 col-center">
+    <div class="card text-center card-bordered">
+      <div class="card-body">
+        <h3 class="card-title">
+            <a href="{% url 'user_detail_url' username=sub.friend.username %}">
+              <b>{{ sub.friend.username }}</b>
+            </a></h3>  
+        <p class="card-text">Pics added - {{ sub.friend.user_add.counter }}</p>      
+        {% if user.photo %}
+        	<p class="card-text">{{ sub.friend.username }} has uploaded pic - 
+        		<a href="{% url 'pic_detail_url' id=sub.friend.photo.id %}"><b>{{ sub.friend.photo.title }}</b></a></p>
+        {% endif %}
+
+        {% if request.user.is_authenticated and request.user != user %}
+          {% if sub_exist %}
+            <a href="{% url 'user_unsubscribe_url' username=sub.friend.username %}" class="btn btn-dark">Unsubscribe</a>
+          {% else %}
+            <a href="{% url 'user_subscribe_url' username=sub.friend.username %}" class="btn btn-dark">Subscribe</a>
+          {% endif %}
+        {% endif %}     
+        
+      </div>
+      
+      {% if request.user.is_authenticated and request.user.is_staff  %}
+      	<div class="card-footer text-muted">
+      		<a href="{% url 'admin_delete_pic_url' username=sub.friend.username %}" class="btn btn-warning btn-sm">Admin-Delete</a>
+      	</div>
+      {% endif %}
+    </div>
+  </div>
+</div>
+
+  {% endfor %}
+
+{% else %}
+  <h2>You are not subscribed to anyone</h2><br>
+{% endif %}
+
+<a href="{% url 'pics_list_url' %}" class="btn btn-dark">Back to main</a>
+
+
+{% endblock	%}

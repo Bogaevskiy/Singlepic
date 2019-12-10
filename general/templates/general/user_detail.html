@@ -20,7 +20,16 @@
     {% if user.photo %}
     	<p class="card-text">{{ user.username }} has uploaded pic - 
     		<a href="{% url 'pic_detail_url' id=user.photo.id %}"><b>{{ user.photo.title }}</b></a></p>
-    {% endif %}    
+    {% endif %}
+
+    {% if request.user.is_authenticated and request.user != user %}
+      {% if sub_exist %}
+        <a href="{% url 'user_unsubscribe_url' username=user.username %}" class="btn btn-dark">Unsubscribe</a>
+      {% else %}
+        <a href="{% url 'user_subscribe_url' username=user.username %}" class="btn btn-dark">Subscribe</a>
+      {% endif %}
+    {% endif %}
+    
     <a href="{% url 'pics_list_url' %}" class="btn btn-dark">Back to main</a>
   </div>  
   {% if user == request.user %}

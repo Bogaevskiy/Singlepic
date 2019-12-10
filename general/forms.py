@@ -65,3 +65,10 @@ class UserListForm(forms.Form):
 
 class PicsListForm(forms.Form):
 	title = forms.CharField(label='Search pics by title')
+
+class CommentForm(forms.Form):
+	body = forms.CharField(label = "Your comment?")
+
+class RestoreAccessForm(forms.Form):
+	username = forms.CharField(label='Your username')
+	mail = forms.EmailField(label='Your email')

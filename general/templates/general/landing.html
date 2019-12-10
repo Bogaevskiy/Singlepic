@@ -1,0 +1,18 @@
+{% extends "general/base_general.html" %}
+
+{% block title %}
+	{{ photo.title }}
+{% endblock %}
+
+
+{% block content %}
+	<h1>Hello!</h1>
+	<p>Welcome to <b>Singlepic</b></p>
+	<p>Here you can sign in and post pics</p>
+	<p>But only one at a time</p>
+	<p>Or, you can still surf this site without logging</p>
+	<p>Enjoy</p>
+	<a href="{% url 'new_user_url' %}" class='btn btn-dark btn-pad'>Sign in</a>
+	<a href="{% url 'user_login_url' %}" class='btn btn-dark btn-pad'>Login</a><br>
+	<a href="{% url 'pics_list_url' %}" class='btn btn-dark btn-pad'>Just surf</a>
+{% endblock %}

@@ -1,4 +1,5 @@
 {% load static %}
+{% load staticfiles %}
 <!DOCTYPE html>
 <html lang = "en">
 <head>
@@ -27,12 +28,7 @@
 		<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavDropdown" aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
 			<span class="navbar-toggler-icon"></span>
 		</button>
-		<div class="collapse navbar-collapse justify-content-end" id="navbarNavDropdown">	
-			{% if request.user.username %}
-				<font color = red>{{ request.user.username }}</font>
-			{% else %}
-				<font color = red>Nobody</font>
-			{% endif %}		
+		<div class="collapse navbar-collapse justify-content-end" id="navbarNavDropdown">				
 			<ul class="navbar-nav">
 				<li>
 					{% if request.user.is_authenticated and request.user.is_staff  %}
@@ -62,12 +58,15 @@
 							<button class="dropdown-item" type="button">
 								<a class="nav-link" href="{% url 'pics_list_url' %}">Pics list</a>
 							</button>
-							{% if request.user.username %}
+							{% if request.user.is_authenticated %}
 								<button class="dropdown-item" type="button">
 									<a class="nav-link" href="{% url 'user_logout_url' %}">Logout</a>
 								</button>
 								<button class="dropdown-item" type="button">
 									<a class="nav-link" href="{% url 'photo_upload_url' %}">Upload</a>
+								</button>
+								<button class="dropdown-item" type="button">
+									<a class="nav-link" href="{% url 'subscriptions_list_url' %}">Subscriptions</a>
 								</button>
 							{% else %}
 								<button class="dropdown-item" type="button">
@@ -89,6 +88,39 @@
 			{% block content %}
 				There is no content here for you, maybe, something went wrong
 			{% endblock	%}		
+	
+
+
+	{% if is_paginated %}	
+	<nav aria-label="...">
+		<ul class="pagination justify-content-center">
+
+			<li class="page-item  {% if not prev_url %} disabled {% endif %}">
+				<a class="page-link" href="{{ prev_url }}" tabindex="-1">Previous</a>
+			</li> 
+
+			{% for i in page_object.paginator.page_range %}
+			{% if page_object.number == i %}
+			<li class="page-item active">
+				<a class="page-link" href="?page={{ i }}"> {{ i }} <span class="sr-only">(current)</span></a>
+			</li>
+			{% elif i > page_object.number|add:-3 and i < page_object.number|add:3 %}
+			<li class="page-item">
+				<a class="page-link" href="?page={{ i }}">{{ i }}</a>
+			</li>
+
+
+			{% endif %}				    	
+			{% endfor %}
+
+			<li class="page-item  {% if not next_url %} disabled {% endif %}">
+				<a class="page-link" href="{{ next_url }}" >Next</a>
+
+			</li>
+		</ul>
+	</nav>
+	{% endif %}
+
 	</div>
 
 	{% if request.user.is_authenticated and request.user.is_staff  %}

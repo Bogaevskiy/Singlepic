@@ -7,31 +7,29 @@
 
 {% block content %}
 
-<div class = 'justify-content-end'>
-	<form action="{% url 'pics_list_url' %}" method="post">
-		{% csrf_token %}
-		{% for field in form %}     
-		{% if field.errors %}
-		<div class="alert alert-danger">
-			{{ field.errors }}
-		</div>
-		{% endif %}
-		<div class = "form-group">
-			{{ field.label }}  
-			{{ field }}
-			<button type = "Submit" class ="btn btn-dark btn-sm">Search</button>
-			{% if post %}
-			<a href="{% url 'pics_list_url' %}" class="btn btn-dark btn-sm">See full list</a>
-			{% endif %}
-			<br>        
-		</div>   
-		{% endfor %}       
-	</form>
-</div>
 
+<form action="{% url 'pics_list_url' %}" method="post">
+	{% csrf_token %}
+	{% for field in form %}     
+	{% if field.errors %}
+	<div class="alert alert-danger">
+		{{ field.errors }}
+	</div>
+	{% endif %}
+	<div class = "form-group">
+		{{ field.label }}  
+		{{ field }}
+		<button type = "Submit" class ="btn btn-dark btn-sm">Search</button>
+		{% if post %}
+		<a href="{% url 'pics_list_url' %}" class="btn btn-dark btn-sm">See full list</a>
+		{% endif %}
+		<br>        
+	</div>   
+	{% endfor %}       
+</form>
 
 <div class="row">
-	{% for photo in photos %}	
+	{% for photo in page_object.object_list %}
 	<div class="col-sm-3 col-center">
 		<div class="card card-bordered" style="width: 18rem;">
 			<img class="card-img-top" src="{{ photo.thumbnail.url }}" alt="{ photo.title }">

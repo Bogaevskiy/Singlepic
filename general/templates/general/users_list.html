@@ -7,35 +7,37 @@
 
 {% block content %}
 	
-<form action="{% url 'users_list_url' %}" method="post">
-	{% csrf_token %}
-	{% for field in form %}     
-	{% if field.errors %}
-	<div class="alert alert-danger">
-		{{ field.errors }}
-	</div>
-	{% endif %}
-	<div class = "form-group">
-		{{ field.label }}  
-		{{ field }}
-		<button type = "Submit" class ="btn btn-dark btn-sm admin-obj">Search</button>
-		{% if post %}
-		<a href="{% url 'users_list_url' %}" class="btn btn-dark btn-sm admin-obj">See full list</a>
+	<form action="{% url 'users_list_url' %}" method="post">
+		{% csrf_token %}
+		{% for field in form %}     
+		{% if field.errors %}
+		<div class="alert alert-danger">
+			{{ field.errors }}
+		</div>
 		{% endif %}
-		<br>        
-	</div>   
-	{% endfor %}
-</form>
+		<div class = "form-group">
+			{{ field.label }}  
+			{{ field }}
+			<button type = "Submit" class ="btn btn-dark btn-sm ">Search</button>
+			{% if post %}
+			<a href="{% url 'users_list_url' %}" class="btn btn-dark btn-sm ">See full list</a>
+			{% endif %}
+			<br>        
+		</div>   
+		{% endfor %}
+	</form>
 
+	<table>
 	{% for user in users %}
-		<p><a href="{% url 'user_detail_url' username=user.username %}">{{ user.username }}</a>
-		{% if user == request.user %}
-			<b>(it's you!)</b>
-		{% endif %}
-		{% if user.photo %}
-			 - has uploaded pic
-		{% endif %}</p>
+		<tr><p><a href="{% url 'user_detail_url' username=user.username %}">{{ user.username }}</a>
+			{% if user == request.user %}
+				<b>(it's you!)</b>
+			{% endif %}
+			{% if user.photo %}
+				 - has uploaded pic
+		{% endif %}</p> </tr>
 	{% endfor %}
+	</table>
 
-	
+
 {% endblock %}

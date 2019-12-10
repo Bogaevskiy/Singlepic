@@ -1,0 +1,39 @@
+{% extends "general/base_general.html" %}
+
+{% block title %}
+	Restoring access
+{% endblock %}
+
+{% block content %}
+
+	<div class="card text-center card-bordered col-sm-5 col-center">  
+		<div class="card-body">
+			<h2>So...</h2>
+			<p>You have forgotten your password?</p>
+			<p>Give us your username and e-mail</p>
+			<p>And, if everything is right, we will set your new password </p>
+			<p>and send it to your mail</p>
+			
+			<form action="{% url 'restore_access_url' %}", method="post" enctype="multipart/form-data" >
+			{% csrf_token %}
+				{% for field in form %}			
+				<div class = "form-group">
+					{% if field.errors %}
+					<div class="alert alert-danger">
+						{{ field.errors }}
+					</div>
+					{% endif %}
+
+					{{ field.label }}<br>
+					{{ field }}
+				</div>
+				
+				{% endfor %}
+				<button type = "Submit" class ="btn btn-dark">Submit</button>
+			</form>
+
+
+		</div>
+	</div>
+
+{% endblock %}
