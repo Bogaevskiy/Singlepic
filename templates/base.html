@@ -60,21 +60,31 @@
 							</button>
 							{% if request.user.is_authenticated %}
 								<button class="dropdown-item" type="button">
-									<a class="nav-link" href="{% url 'user_logout_url' %}">Logout</a>
+									<a class="nav-link" href="{% url 'subscriptions_list_url' %}">Subscriptions</a>
 								</button>
+								<button class="dropdown-item" type="button">
+									<a class="nav-link" href="{% url 'user_edit_url' username=request.user.username %}">Edit account</a>
+								</button>
+							{% endif %}
+							<button class="dropdown-item" type="button">
+								<a class="nav-link" href="{% url 'about_url' %}">About</a>
+							</button>
+							{% if request.user.is_authenticated %}
 								<button class="dropdown-item" type="button">
 									<a class="nav-link" href="{% url 'photo_upload_url' %}">Upload</a>
 								</button>
+								<div class="dropdown-divider"></div>	
 								<button class="dropdown-item" type="button">
-									<a class="nav-link" href="{% url 'subscriptions_list_url' %}">Subscriptions</a>
-								</button>
+									<a class="nav-link" href="{% url 'user_logout_url' %}">Logout</a>
+								</button>															
 							{% else %}
-								<button class="dropdown-item" type="button">
-									<a class="nav-link" href="{% url 'new_user_url' %}">Create user</a>
-								</button>
+								<div class="dropdown-divider"></div>
 								<button class="dropdown-item" type="button">
 									<a class="nav-link" href="{% url 'user_login_url' %}">Login</a>
 								</button>
+								<button class="dropdown-item" type="button">
+									<a class="nav-link" href="{% url 'new_user_url' %}">Create user</a>
+								</button>								
 							{% endif %}							
 						</div>
 					</div>

@@ -1,5 +1,8 @@
 import random, string
 
+from django.core.mail import send_mail
+from django.conf import settings
+
 def blockedcommentmessage():
 	messages = [
 		'Comment was blocked by admin',
@@ -44,3 +47,12 @@ def passwordgenerator():
 	for i in range(4):
 		letters = letters + random.choice(string.ascii_letters)
 	return random.choice(words_list).capitalize() + str(number) + letters
+
+def send_password_mail(newpassword, email):		
+	text = "Hello again. And thank you for using our restoring access system. Your new password is {}, hope to see you back soon".format(newpassword)
+	send_mail(
+		'Singlepic - restoring access',
+		text,
+		settings.EMAIL_HOST_USER,
+		[email]
+		)

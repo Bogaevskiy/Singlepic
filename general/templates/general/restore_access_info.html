@@ -10,10 +10,11 @@
 		<div class="card-body">
 			<h2>Success!</h2>
 			<p>We have found you</p>
-			<p>Your name - {{ username }}</p>
-			<p>your password will be {{ password }}</p>
-
-			<button type = "Submit" class ="btn btn-dark">Sign in</button>
+			<p>Check your email, your new password should be there</p>
+			<p>See you soon!</p>
+			
+			<a href="{% url 'user_login_url' %}" class='btn btn-dark btn-pad'>Login</a>
+			<a href="{% url 'landing_url' %}" class='btn btn-dark btn-pad'>Get back to main</a>
 
 		</div>
 	</div>

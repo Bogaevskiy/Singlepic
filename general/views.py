@@ -6,6 +6,11 @@ from django.contrib.auth import authenticate, login, logout
 from django.urls import reverse
 from django.core.paginator import Paginator
 
+from django.core.mail import send_mail #to delete later
+
+from django.conf import settings
+
+
 from .utils import *
 from .forms import *
 from .models import *
@@ -132,7 +137,7 @@ class LoginUser(View):
 
 def user_logout(request):
 	logout(request)
-	return redirect('pics_list_url')
+	return redirect('landing_url')
 
 class UserDetail(View):
 	def get(self, request, username):
@@ -242,10 +247,41 @@ class UserEdit(View):
 		else:
 			return redirect('user_detail_url', username= user.username)
 
-	def post(self,request, username):
+	def post(self,request, username):		
 		user = get_object_or_404(User, username=username)		
 		user.user_add.description = request.POST['description']
 		user.user_add.save()
+		return redirect('user_detail_url', username= user.username)
+
+class UserBaseEdit(View):
+	def get(self, request, username):
+		user = get_object_or_404(User, username=username)
+		
+		if request.user == user:
+			form = UserBaseEditForm		
+			return render(request, 'general/user_base_edit.html', context={'form': form, 'user': user})
+		else:
+			return redirect('user_detail_url', username=user.username)			
+
+	def post(self, request, username):
+		user = get_object_or_404(User, username=username)
+		password = request.POST['password']
+		user = authenticate(request, username = username, password = password)
+		if user is not None and request.user == user:
+			email = request.POST['email']
+			r = User.objects.filter(email = email)
+			if r.count() and user.email != email:
+				raise ValidationError("This E-mail is already in use")
+			else:
+				user.email = email
+			newpassword1 = request.POST['newpassword1']
+			newpassword2 = request.POST['newpassword2']
+			if newpassword1 != newpassword2:
+				raise ValidationError("Something wrong with new password")
+			else:
+				user.set_password(newpassword1)
+			user.save()
+			login(request, user)
 		return redirect('user_detail_url', username= user.username)
 
 def about(request):	
@@ -370,7 +406,12 @@ class RestoreAccess(View):
 		if User.objects.filter(username = username):
 			user = User.objects.get(username = username)
 			if user.email == mail:
-				password = passwordgenerator()
-				#успешное обнаружение
-				return render(request, 'general/restore_access_info.html', 
-					context={'username': username, 'password': password})
+				newpassword = passwordgenerator()
+				send_password_mail(newpassword, user.email)
+				user.set_password(newpassword)
+				user.save()
+				return render(request, 'general/restore_access_info.html')
+			else:
+				return render(request, 'general/wrong.html')
+		else:
+			return render(request, 'general/wrong.html')

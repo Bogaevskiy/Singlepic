@@ -32,7 +32,8 @@
   		{% for user in users %}
   			<li class="list-group-item"><b>{{ user.username }}</b>, 
   									created {{ user.date_joined }}, 
-  									pics - {{user.user_add.counter}}
+  									pics - {{user.user_add.counter}}, 
+                    mail - {{ user.email }}
   									<a href="{% url 'admin_delete_user_url' username=user.username %}"> <b>DELETE</b> </a> </li>
   		{% endfor %}
   	</ul>

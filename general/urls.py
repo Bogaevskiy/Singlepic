@@ -16,7 +16,8 @@ urlpatterns = [
     path('pics/<int:id>/like', photo_like, name = "photo_like_url"),
     path('pics/<int:id>/dislike', photo_dislike, name = "photo_dislike_url"),
     path('user/<str:username>/edit', UserEdit.as_view(), name = "user_edit_url"),
-    path('about', about, name = 'about.html'),
+    path('user/<str:username>/base_edit', UserBaseEdit.as_view(), name = "user_base_edit_url"),
+    path('about', about, name = 'about_url'),
     path('pics/<int:id>/admin_delete_pic', admin_delete_pic, name = 'admin_delete_pic_url'),
     path('pics/<int:id>/admin_block_pic', admin_block_pic, name = 'admin_block_pic_url'),
     path('user/<str:username>/admin_delete_user', admin_delete_user, name = 'admin_delete_user_url'),
@@ -27,5 +28,5 @@ urlpatterns = [
     path('user/<str:username>/subscribe', user_subscribe, name = 'user_subscribe_url'),
     path('user/<str:username>/unsubscribe', user_unsubscribe, name = 'user_unsubscribe_url'),
     path('subscriptions_list', subscriptions_list, name = 'subscriptions_list_url'),
-    path('restore_access', RestoreAccess.as_view(), name = 'restore_access_url')
+    path('restore_access', RestoreAccess.as_view(), name = 'restore_access_url'),
 ]

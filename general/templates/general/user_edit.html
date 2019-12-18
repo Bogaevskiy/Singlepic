@@ -8,7 +8,7 @@
 	
 	<div class="card text-center card-bordered col-sm-4 col-center">  
 		<div class="card-body">
-			<h3 class="card-title"><b>Something to edit?</b></h3>
+			<h3 class="card-title"><b>Something to edit?</b></h3>		
 			<form action="{% url 'user_edit_url' username=user.username %}" method="post">
 				{% csrf_token %}
 				{% for field in form %}			
@@ -22,10 +22,11 @@
 					{{ field }}
 				</div>
 				{% endfor %}
-				<button type = "Submit" class ="btn btn-dark">Save</button>
-				<a href="{% url 'user_detail_url' username=user.username %}" class="btn btn-dark">Back to main</a>
-			</form>
-
+				<button type = "Submit" class ="btn btn-dark btn-pad">Save</button>
+				<a href="{% url 'user_detail_url' username=user.username %}" class="btn btn-dark btn-pad">Back to main</a>
+			</form>	
+			<a href="{% url 'user_base_edit_url' username=user.username %}" class="btn btn-dark btn-pad">Edit email and password</a>
+			
 		</div>
 	</div>
 

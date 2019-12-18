@@ -60,6 +60,18 @@ class PicDeleteForm(forms.Form):
 class UserEditForm(forms.Form):
 	description = forms.CharField(label='Some words about yourself', widget = forms.Textarea)
 
+class UserBaseEditForm(forms.Form):
+	mail = "put something here"
+
+	email = forms.EmailField(label="Your e-mail", initial = mail)
+	newpassword1 = forms.CharField(label='Enter new password', widget = forms.PasswordInput)
+	newpassword2 = forms.CharField(label='Confirm new password', widget = forms.PasswordInput)
+	password = forms.CharField(label='Your current password', widget = forms.PasswordInput)
+
+
+
+
+
 class UserListForm(forms.Form):
 	username = forms.CharField(label='Search for users by name')
 
