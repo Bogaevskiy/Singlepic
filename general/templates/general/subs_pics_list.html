@@ -1,0 +1,49 @@
+{% extends "general/base_general.html" %}
+{% load staticfiles %}
+
+{% block title %}
+	Subs Pics
+{% endblock %}
+
+
+{% block content %}
+
+	{% if subscriptions.count %}
+
+	<h3>Pics of your subscribed users</h3><br>
+
+		<div class="row">
+		{% for sub in subscriptions %}
+		<div class="col-sm-3 col-center">
+			<div class="card card-bordered" style="width: 18rem;">
+				{% if sub.friend.photo.blocked %}
+					<a href="{% url 'pic_detail_url' id=sub.friend.photo.id %}">
+						<img class="card-img-top" src="{% static 'img/Blocked_small.png' %}" alt="Image-block">
+					</a>
+				{% else %}
+					<a href="{% url 'pic_detail_url' id=sub.friend.photo.id %}">
+						<img class="card-img-top" src="{{ sub.friend.photo.thumbnail.url }}" 
+							alt="{ sub.friend.photo.title }">
+					</a>
+				{% endif %}
+				<div class="card-body">
+					<a href="{% url 'pic_detail_url' id=sub.friend.photo.id %}"><h5 class="card-title">
+						{{ sub.friend.photo.title }}</h5></a>
+					<p class="card-text">{{ sub.friend.photo.description }}</p>				
+					<p class="card-text">By <a href="{% url 'user_detail_url' username=sub.friend.username %}">
+					{{ sub.friend.username }}</a></p>				
+				</div>
+			</div>
+		</div>
+		
+		{% endfor %}
+		</div>
+
+	{% else %}
+		<h2>You are not subscribed to anyone</h2><br>
+	{% endif %}
+	
+	
+
+
+{% endblock %}

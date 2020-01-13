@@ -57,20 +57,29 @@ class UserDeleteForm(forms.Form):
 class PicDeleteForm(forms.Form):
 	pass
 
-class UserEditForm(forms.Form):
-	description = forms.CharField(label='Some words about yourself', widget = forms.Textarea)
+class UserEditForm(forms.Form):	
+	desc = ''
+
+	def __init__(self, *args, **kwargs):
+		desc = kwargs.pop('description')
+		super(UserEditForm, self).__init__(*args, **kwargs)
+		self.fields['description'] = forms.CharField(label='Some words about yourself', 
+													widget = forms.Textarea, initial = desc)
+
+	description = forms.CharField(label='Some words about yourself', widget = forms.Textarea, initial = desc)
 
 class UserBaseEditForm(forms.Form):
-	mail = "put something here"
+	mail = ""
+
+	def __init__(self, *args, **kwargs):
+		mail = kwargs.pop('mail')
+		super(UserBaseEditForm, self).__init__(*args, **kwargs)
+		self.fields['email'] = forms.EmailField(label="Your e-mail", initial = mail)
 
 	email = forms.EmailField(label="Your e-mail", initial = mail)
 	newpassword1 = forms.CharField(label='Enter new password', widget = forms.PasswordInput)
 	newpassword2 = forms.CharField(label='Confirm new password', widget = forms.PasswordInput)
 	password = forms.CharField(label='Your current password', widget = forms.PasswordInput)
-
-
-
-
 
 class UserListForm(forms.Form):
 	username = forms.CharField(label='Search for users by name')
@@ -84,3 +93,6 @@ class CommentForm(forms.Form):
 class RestoreAccessForm(forms.Form):
 	username = forms.CharField(label='Your username')
 	mail = forms.EmailField(label='Your email')
+
+class CommentsListForm(forms.Form):
+	search = forms.CharField(label = 'Search by username or content')

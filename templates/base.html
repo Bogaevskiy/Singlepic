@@ -24,7 +24,7 @@
 
 <body>
 	<nav class="navbar navbar-expand-lg navbar-dark bg-dark ">
-		<a class="navbar-brand" href="{% url 'pics_list_url' %}">Singlepic</a>
+		<a class="navbar-brand" href="{% url 'landing_url' %}">Singlepic</a>
 		<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavDropdown" aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
 			<span class="navbar-toggler-icon"></span>
 		</button>
@@ -45,6 +45,9 @@
 							<button class="dropdown-item" type="button">
 								<a class="nav-link" href="{% url 'admin_pics_list_url' %}">Pics</a>
 							</button>
+							<button class="dropdown-item" type="button">
+								<a class="nav-link" href="{% url 'admin_comments_list_url' %}">Comments</a>
+							</button>
 						</div>
 					{% endif %}
 					<div class="btn-group">
@@ -63,7 +66,10 @@
 									<a class="nav-link" href="{% url 'subscriptions_list_url' %}">Subscriptions</a>
 								</button>
 								<button class="dropdown-item" type="button">
-									<a class="nav-link" href="{% url 'user_edit_url' username=request.user.username %}">Edit account</a>
+									<a class="nav-link" href="{% url 'subs_pics_list_url' %}">Subs Pics</a>
+								</button>
+								<button class="dropdown-item" type="button">
+									<a class="nav-link" href="{% url 'user_detail_url' username=request.user.username %}">Account</a>
 								</button>
 							{% endif %}
 							<button class="dropdown-item" type="button">

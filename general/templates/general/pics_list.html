@@ -1,4 +1,5 @@
 {% extends "general/base_general.html" %}
+{% load staticfiles %}
 
 {% block title %}
 	Main Page
@@ -32,12 +33,20 @@
 	{% for photo in page_object.object_list %}
 	<div class="col-sm-3 col-center">
 		<div class="card card-bordered" style="width: 18rem;">
-			<img class="card-img-top" src="{{ photo.thumbnail.url }}" alt="{ photo.title }">
+			{% if photo.blocked %}
+				<a href="{% url 'pic_detail_url' id=photo.id %}">
+					<img class="card-img-top" src="{% static 'img/Blocked_small.png' %}" alt="Image-block">
+				</a>
+			{% else %}
+				<a href="{% url 'pic_detail_url' id=photo.id %}">
+					<img class="card-img-top" src="{{ photo.thumbnail.url }}" alt="{ photo.title }">
+				</a>
+			{% endif %}
 			<div class="card-body">
 				<a href="{% url 'pic_detail_url' id=photo.id %}"><h5 class="card-title">{{ photo.title }}</h5></a>
-				<p class="card-text">{{ photo.description }}</p>
+				<p class="card-text">{{ photo.description }}</p>				
 				<p class="card-text">By <a href="{% url 'user_detail_url' username=photo.user.username %}">
-				{{ photo.user.username }}</a></p>				
+				{{ photo.user.username }}</a></p>						
 			</div>
 		</div>
 	</div>

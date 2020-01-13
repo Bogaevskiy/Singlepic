@@ -1,0 +1,79 @@
+{% extends "general/base_general.html" %}
+
+{% block title %}
+	Comments List
+{% endblock %}
+
+
+{% block content %}
+
+	<form action="{% url 'admin_comments_list_url' %}" method="post">
+		{% csrf_token %}
+		{% for field in form %}     
+		{% if field.errors %}
+			<div class="alert alert-danger">
+				{{ field.errors }}
+			</div>
+		{% endif %}
+		<div class = "form-group">
+			{{ field.label }}  
+			{{ field }}
+			<button type = "Submit" class ="btn btn-dark btn-sm admin-obj">Search</button>
+			{% if post %}
+				<a href="{% url 'admin_comments_list_url' %}" class="btn btn-dark btn-sm admin-obj">Full list</a>
+			{% endif %}
+			<br>        
+		</div>   
+		{% endfor %}       
+	</form>
+
+	{% if post %}
+
+		{% if author_comments.count %}
+			<h4>Comments found by author - {{ author_comments.count }} results:</h4>
+			<ul class="list-group list-group-flush">
+				{% for comment in author_comments %}
+					<li class="list-group-item">
+					<b>{{ comment.user.username }}</b> to <b>{{ comment.photo.description }}</b>: {{ comment.body }}
+					{% if comment.blocked %}
+						<b>(blocked)</b>
+					{% endif %}
+				</li>
+				{% endfor %}
+			</ul>
+		{% else %}
+			<h4>No comments found by author</h4>
+		{% endif %}
+		<br>
+		{% if body_comments.count %}
+			<h4>Comments found by content - {{ body_comments.count }} results:</h4>
+			<ul class="list-group list-group-flush">
+				{% for comment in body_comments %}
+					<li class="list-group-item">
+					<b>{{ comment.user.username }}</b> to <b>{{ comment.photo.description }}</b>: {{ comment.body }}
+					{% if comment.blocked %}
+						<b>(blocked)</b>
+					{% endif %}
+				</li>
+				{% endfor %}
+			</ul>
+		{% else %}
+			<h4>No comments found by content</h4>
+		{% endif %}
+
+	{% else %}
+
+		<ul class="list-group list-group-flush">
+		{% for comment in comments %}
+			<li class="list-group-item">
+				<b>{{ comment.user.username }}</b> to <b>{{ comment.photo.description }}</b>: {{ comment.body }}
+				{% if comment.blocked %}
+					<b>(blocked)</b>
+				{% endif %}
+			</li>
+		{% endfor %}
+	</ul>
+
+	{% endif %}
+
+{% endblock %}

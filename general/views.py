@@ -18,7 +18,7 @@ from .models import *
 
 def landing(request):
 	if request.user.is_authenticated:
-		redirect('pics_list_url')
+		return redirect("pics_list_url")
 	else:
 		return render(request, 'general/landing.html')
 
@@ -54,9 +54,13 @@ class PicsList(View):
 		return render(request, 'general/pics_list.html', context=context)
 
 	def post(self, request):
-		form = PicsListForm
-		title = request.POST['title']
-		photos = Photo.objects.filter(title__icontains=title).order_by('id')
+		form = PicsListForm(request.POST)
+		if form.is_valid():
+			title = form.cleaned_data['title']
+			photos = Photo.objects.filter(title__icontains=title).order_by('id')
+		else:
+			photos = Photo.objects.all().order_by('id')		
+		
 
 		paginator = Paginator(photos, 4)
 		page_number = request.GET.get('page', 1)
@@ -92,9 +96,12 @@ class UserList(View):
 		return render(request, 'general/users_list.html', context={'users': users, 'form': form, 'post': False})
 
 	def post(self, request):
-		form = UserListForm
-		name = request.POST['username']
-		users = User.objects.filter(title__icontains=name)
+		form = UserListForm(request.POST)
+		if form.is_valid():
+			name = form.cleaned_data['username']
+			users = User.objects.filter(username__icontains=name)
+		else:
+			users = User.objects.all()		
 		return render(request, 'general/users_list.html', context={'users': users, 'form': form, 'post': True})
 
 def users_list(request):
@@ -111,8 +118,8 @@ class NewUser(View):
 	 	form = CustomUserForm(request.POST)
 	 	if form.is_valid():
 	 		form.save()
-	 		username = request.POST.get('username')
-	 		password = request.POST.get('password1')	 		
+	 		username = form.cleaned_data['username']
+	 		password = form.cleaned_data['password1']	 			 		
 	 		user = authenticate(request, username=username, password=password)
 	 		login(request, user)
 	 		return redirect('pics_list_url')
@@ -124,16 +131,20 @@ class LoginUser(View):
 		form = LoginForm
 		return render(request, 'general/user_login.html', context={'form': form})
 
-	def post(self, request):	 	
-	 	username = request.POST['username']
-	 	password = request.POST['password']
-	 	user = authenticate(request, username=username, password=password)
-	 	if user is not None:
-	 		login(request, user)
-	 		return redirect('pics_list_url')
-	 	else:
-	 		form = LoginForm
-	 		return render(request, 'general/user_login.html', context={'form': form})
+	def post(self, request):
+		form = LoginForm(request.POST)
+		if form.is_valid():
+			username = form.cleaned_data['username']
+			password = form.cleaned_data['password']
+		else:
+			return render(request, 'general/user_login.html', context={'form': form})
+		user = authenticate(request, username=username, password=password)
+		if user is not None:
+			login(request, user)
+			return redirect('pics_list_url')
+		else:
+			form = LoginForm
+			return render(request, 'general/user_login.html', context={'form': form})	 	
 
 def user_logout(request):
 	logout(request)
@@ -163,8 +174,8 @@ class PhotoUpload(View):
 			if Photo.objects.filter(user = request.user).count() > 0:
 				request.user.photo.delete()
 			photo = Photo.objects.create(user = request.user)
-			photo.title = request.POST['title']
-			photo.description = request.POST['description']
+			photo.title = form.cleaned_data['title']			
+			photo.description = form.cleaned_data['description']
 			photo.file = request.FILES['file']
 			photo.save()
 			request.user.user_add.counter += 1
@@ -184,14 +195,18 @@ class UserDelete(View):
 			return redirect('pics_list_url')
 
 	def post(self, request, username):
-		password = request.POST['password']
-		user = authenticate(request, username = username, password = password)
-		if user is not None:
-			user.delete()
-			return redirect('pics_list_url')		
+		form = UserDeleteForm(request.POST)
+		if form.is_valid():
+			password = form.cleaned_data['password']
+			user = authenticate(request, username = username, password = password)
+			if user is not None:
+				user.delete()
+				return redirect('pics_list_url')		
+			else:
+				form = UserDeleteForm()
+				return render(request, 'general/user_delete_form.html', context={'form': form, 'user': user})
 		else:
-			form = UserDeleteForm()
-			return render(request, 'general/user_delete_form.html', context={'form': form, 'user': user})
+			return redirect('user_delete_url')
 
 class PicDetail(View):
 	def get(self, request, id):
@@ -213,10 +228,13 @@ class PicDetail(View):
 						'block_message': block_message})
 
 	def post(self, request, id):		
-		photo = get_object_or_404(Photo, id = id)		
-		comment = Comment.objects.create(photo = photo, user = request.user)
-		comment.body = request.POST['body']		
-		comment.save()
+		photo = get_object_or_404(Photo, id = id)	
+		form = CommentForm(request.POST)
+		if form.is_valid():	
+			comment = Comment.objects.create(photo = photo, user = request.user)
+			comment.author = request.user.username
+			comment.body = form.cleaned_data['body']		
+			comment.save()		
 		if request.user.is_authenticated:
 			like_exist = Like.objects.filter(photo = photo, user = request.user)
 		else:
@@ -242,15 +260,18 @@ class UserEdit(View):
 	def get(self, request, username):
 		user = get_object_or_404(User, username=username)
 		if request.user == user:
-			form = UserEditForm
+			form = UserEditForm(description = user.user_add.description)
+
 			return render(request, 'general/user_edit.html', context={'form': form, 'user': user})
 		else:
 			return redirect('user_detail_url', username= user.username)
 
 	def post(self,request, username):		
-		user = get_object_or_404(User, username=username)		
-		user.user_add.description = request.POST['description']
-		user.user_add.save()
+		user = get_object_or_404(User, username=username)	
+		form = UserEditForm(request.POST, description = user.user_add.description)
+		if form.is_valid():			
+			user.user_add.description = form.cleaned_data['description']			
+			user.user_add.save()
 		return redirect('user_detail_url', username= user.username)
 
 class UserBaseEdit(View):
@@ -258,30 +279,32 @@ class UserBaseEdit(View):
 		user = get_object_or_404(User, username=username)
 		
 		if request.user == user:
-			form = UserBaseEditForm		
+			form = UserBaseEditForm(mail = user.email)
 			return render(request, 'general/user_base_edit.html', context={'form': form, 'user': user})
 		else:
 			return redirect('user_detail_url', username=user.username)			
 
 	def post(self, request, username):
-		user = get_object_or_404(User, username=username)
-		password = request.POST['password']
-		user = authenticate(request, username = username, password = password)
-		if user is not None and request.user == user:
-			email = request.POST['email']
-			r = User.objects.filter(email = email)
-			if r.count() and user.email != email:
-				raise ValidationError("This E-mail is already in use")
-			else:
-				user.email = email
-			newpassword1 = request.POST['newpassword1']
-			newpassword2 = request.POST['newpassword2']
-			if newpassword1 != newpassword2:
-				raise ValidationError("Something wrong with new password")
-			else:
-				user.set_password(newpassword1)
-			user.save()
-			login(request, user)
+		form = UserBaseEditForm(request.POST, mail = user.email)
+		if form.is_valid():
+			user = get_object_or_404(User, username=username)
+			password = form.cleaned_data['password']
+			user = authenticate(request, username = username, password = password)		
+			if user is not None and request.user == user:
+				email = form.cleaned_data['email']
+				r = User.objects.filter(email = email)
+				if r.count() and user.email != email:
+					raise ValidationError("This E-mail is already in use")
+				else:
+					user.email = email
+				newpassword1 = form.cleaned_data['newpassword1']
+				newpassword2 = form.cleaned_data['newpassword2']
+				if newpassword1 != newpassword2:
+					raise ValidationError("Something wrong with new password")
+				else:
+					user.set_password(newpassword1)
+				user.save()
+				login(request, user)
 		return redirect('user_detail_url', username= user.username)
 
 def about(request):	
@@ -333,9 +356,12 @@ class AdminUsersList(View):
 
 	def post(self, request):
 		if request.user.is_authenticated and request.user.is_staff:
-			form = UserListForm
-			name = request.POST['username']
-			users = User.objects.filter(username__icontains=name)
+			form = UserListForm(request.POST)
+			if form.is_valid():
+				name = form.cleaned_data['username']
+				users = User.objects.filter(username__icontains=name)
+			else:
+				users = User.objects.all()
 			return render(request, 'general/admin_users_list.html', 
 							context={'form': form, 'users': users, 'post': True})
 		else:
@@ -345,7 +371,7 @@ class AdminPicsList(View):
 	def get(self, request):
 		if request.user.is_authenticated and request.user.is_staff:
 			form = PicsListForm
-			photos = Photo.objects.all
+			photos = Photo.objects.all()
 			return render(request, 'general/admin_pics_list.html', 
 							context={'form': form, 'photos': photos, 'post': False})
 		else:
@@ -353,13 +379,39 @@ class AdminPicsList(View):
 
 	def post(self, request):
 		if request.user.is_authenticated and request.user.is_staff:
-			form = PicsListForm
-			title = request.POST['title']
-			photos = Photo.objects.filter(title__icontains=title)
+			form = PicsListForm(request.POST)
+			if form.is_valid():
+				title = form.cleaned_data['title']
+				photos = Photo.objects.filter(title__icontains=title)
+			else:
+				photos = Photo.objects.all()
 			return render(request, 'general/admin_pics_list.html', 
 							context={'form': form, 'photos': photos, 'post': True})
 		else:
 			return redirect('pics_list_url')
+
+class AdminCommentsList(View):
+	def get(self, request):
+		if request.user.is_authenticated and request.user.is_staff:
+			form = CommentsListForm
+			comments = Comment.objects.all()
+			return render(request, 'general/admin_comments_list.html',
+							context = {'form': form, 'comments': comments, 'post': False})
+
+	def post(self, request):
+		if request.user.is_authenticated and request.user.is_staff:
+			form = CommentsListForm(request.POST)
+			if form.is_valid():
+				search = form.cleaned_data['search']
+			author_comments = Comment.objects.filter(author__icontains = search)
+			body_comments = Comment.objects.filter(body__icontains = search)
+			return render(request, 'general/admin_comments_list.html',
+							context = {
+							'form': form,
+							'author_comments': author_comments,
+							'body_comments': body_comments,
+							'post': True})
+
 
 def user_subscribe(request, username):
 	friend = User.objects.get(username=username)
@@ -377,8 +429,18 @@ def user_unsubscribe(request, username):
 	return redirect('user_detail_url', username=username)
 
 def subscriptions_list(request):
-	subscriptions = Subscription.objects.filter(user = request.user)
-	return render(request, 'general/subscriptions_list.html', context={'subscriptions': subscriptions})
+	if request.user.is_authenticated:
+		subscriptions = Subscription.objects.filter(user = request.user)
+		return render(request, 'general/subscriptions_list.html', context={'subscriptions': subscriptions})
+	else:
+		return redirect('pics_list_url')
+
+def subs_pics_list(request):
+	if request.user.is_authenticated:
+		subscriptions = Subscription.objects.filter(user = request.user)
+		return render(request, 'general/subs_pics_list.html', context={'subscriptions': subscriptions})
+	else:
+		return redirect('pics_list_url')
 
 def photo_like(request, id):
 	if request.user.is_authenticated and request.user != photo.user:
@@ -401,17 +463,21 @@ class RestoreAccess(View):
 		return render (request, 'general/restore_access.html', context={'form': form})
 
 	def post(self, request):
-		username = request.POST['username']
-		mail = request.POST['mail']
-		if User.objects.filter(username = username):
-			user = User.objects.get(username = username)
-			if user.email == mail:
-				newpassword = passwordgenerator()
-				send_password_mail(newpassword, user.email)
-				user.set_password(newpassword)
-				user.save()
-				return render(request, 'general/restore_access_info.html')
+		form = RestoreAccessForm(request.POST)
+		if form.is_valid():
+			username = form.cleaned_data['username']
+			mail = form.cleaned_data['mail']
+			if User.objects.filter(username = username):
+				user = User.objects.get(username = username)
+				if user.email == mail:
+					newpassword = passwordgenerator()
+					send_password_mail(newpassword, user.email)
+					user.set_password(newpassword)
+					user.save()
+					return render(request, 'general/restore_access_info.html')
+				else:
+					return render(request, 'general/wrong.html')
 			else:
 				return render(request, 'general/wrong.html')
 		else:
-			return render(request, 'general/wrong.html')
+			return redirect('restore_access_url')

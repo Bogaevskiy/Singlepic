@@ -23,7 +23,7 @@
 				</div>
 				{% endfor %}
 				<button type = "Submit" class ="btn btn-dark btn-pad">Save</button>
-				<a href="{% url 'user_detail_url' username=user.username %}" class="btn btn-dark btn-pad">Back to main</a>
+				<a href="{% url 'user_detail_url' username=user.username %}" class="btn btn-dark btn-pad">Back to account</a>
 			</form>	
 			<a href="{% url 'user_base_edit_url' username=user.username %}" class="btn btn-dark btn-pad">Edit email and password</a>
 			

@@ -9,6 +9,11 @@ class User_add(models.Model):
 	description = models.TextField(blank=True, default = "")
 	counter = models.IntegerField(default=0)
 	user = models.OneToOneField(User, on_delete = models.CASCADE, primary_key = True)
+	verified = models.BooleanField(default = False)
+	token = models.CharField(max_length = 20, default = '')
+
+	def __str__(self):
+		return "Add to " + self.user.username
 
 
 class Photo(models.Model):
@@ -43,6 +48,7 @@ class Like(models.Model):
 class Comment(models.Model):
 	photo = models.ForeignKey(Photo, on_delete = models.CASCADE, null = True)
 	user = models.ForeignKey(User, on_delete = models.CASCADE, null = True)
+	author = models.CharField(max_length = 200, default = '')
 	body = models.TextField(max_length = 200)
 	created_at = models.DateTimeField(editable = False, default=timezone.now)
 	blocked = models.BooleanField(default = False)

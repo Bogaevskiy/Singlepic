@@ -56,3 +56,10 @@ def send_password_mail(newpassword, email):
 		settings.EMAIL_HOST_USER,
 		[email]
 		)
+
+def tokengenerator():
+	token = ''
+	for i in range(20):
+		token += random.choice(string.ascii_letters + string.digits)
+	return token
+

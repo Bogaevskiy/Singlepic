@@ -23,10 +23,12 @@ urlpatterns = [
     path('user/<str:username>/admin_delete_user', admin_delete_user, name = 'admin_delete_user_url'),
     path('admin_users_list', AdminUsersList.as_view(), name = 'admin_users_list_url'),
     path('admin_pics_list', AdminPicsList.as_view(), name = 'admin_pics_list_url'),
+    path('admin_comments_list', AdminCommentsList.as_view(), name = 'admin_comments_list_url'),
     path('pics/<int:pic_id>/admin_block_comment/<int:comm_id>', admin_block_comment, name = 'admin_block_comment'),
     path('pics/<int:pic_id>/admin_delete_comment/<int:comm_id>', admin_delete_comment, name = 'admin_delete_comment'),
     path('user/<str:username>/subscribe', user_subscribe, name = 'user_subscribe_url'),
     path('user/<str:username>/unsubscribe', user_unsubscribe, name = 'user_unsubscribe_url'),
     path('subscriptions_list', subscriptions_list, name = 'subscriptions_list_url'),
+    path('subs_pics_list', subs_pics_list, name = 'subs_pics_list_url'),
     path('restore_access', RestoreAccess.as_view(), name = 'restore_access_url'),
 ]
