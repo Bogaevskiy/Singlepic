@@ -24,7 +24,7 @@ def landing(request):
 
 class PicsList(View):
 	def get(self, request):
-		photos = Photo.objects.all().order_by('id')
+		photos = Photo.objects.all().order_by('-id')
 		form = PicsListForm
 
 		paginator = Paginator(photos, 4)
@@ -60,7 +60,6 @@ class PicsList(View):
 			photos = Photo.objects.filter(title__icontains=title).order_by('id')
 		else:
 			photos = Photo.objects.all().order_by('id')		
-		
 
 		paginator = Paginator(photos, 4)
 		page_number = request.GET.get('page', 1)
@@ -103,11 +102,6 @@ class UserList(View):
 		else:
 			users = User.objects.all()		
 		return render(request, 'general/users_list.html', context={'users': users, 'form': form, 'post': True})
-
-def users_list(request):
-	users = User.objects.all()
-	return render(request, 'general/users_list.html', context={'users': users})
-
 
 class NewUser(View):
 	 def get(self, request):
@@ -178,8 +172,17 @@ class PhotoUpload(View):
 			photo.description = form.cleaned_data['description']
 			photo.file = request.FILES['file']
 			photo.save()
+
+			notification = Notification.objects.create()
+			notification.body = '{0} has uploaded new pic - {1}'.format(request.user.username, photo.title)
+			notification.save()
+			subs = Subscription.objects.filter(friend = request.user)
+			for sub in subs:
+				notification.user.add(sub.user)
+
 			request.user.user_add.counter += 1
-			request.user.user_add.save()			
+			request.user.user_add.save()
+
 			return redirect('pics_list_url')
 
 		else:
@@ -234,7 +237,15 @@ class PicDetail(View):
 			comment = Comment.objects.create(photo = photo, user = request.user)
 			comment.author = request.user.username
 			comment.body = form.cleaned_data['body']		
-			comment.save()		
+			comment.save()
+			
+			notification = Notification.objects.create()
+			notification.user.add(photo.user)
+			notification.body = '{0} has commented your pic'.format(request.user.username)
+			notification.save()
+
+			photo.comments_counter = Comment.objects.filter(photo = photo).count()
+			photo.save()	
 		if request.user.is_authenticated:
 			like_exist = Like.objects.filter(photo = photo, user = request.user)
 		else:
@@ -261,7 +272,6 @@ class UserEdit(View):
 		user = get_object_or_404(User, username=username)
 		if request.user == user:
 			form = UserEditForm(description = user.user_add.description)
-
 			return render(request, 'general/user_edit.html', context={'form': form, 'user': user})
 		else:
 			return redirect('user_detail_url', username= user.username)
@@ -276,8 +286,7 @@ class UserEdit(View):
 
 class UserBaseEdit(View):
 	def get(self, request, username):
-		user = get_object_or_404(User, username=username)
-		
+		user = get_object_or_404(User, username=username)		
 		if request.user == user:
 			form = UserBaseEditForm(mail = user.email)
 			return render(request, 'general/user_base_edit.html', context={'form': form, 'user': user})
@@ -285,6 +294,7 @@ class UserBaseEdit(View):
 			return redirect('user_detail_url', username=user.username)			
 
 	def post(self, request, username):
+		user = get_object_or_404(User, username=username)
 		form = UserBaseEditForm(request.POST, mail = user.email)
 		if form.is_valid():
 			user = get_object_or_404(User, username=username)
@@ -314,6 +324,12 @@ def admin_delete_pic(request, id):
 	if request.user.is_authenticated and request.user.is_staff:
 		photo = get_object_or_404(Photo, id=id)
 		photo.delete()
+
+		notification = Notification.objects.create()
+		notification.user.add(photo.user)
+		notification.body = 'Admin has deleted your pic'
+		notification.save()
+
 		return redirect('pics_list_url')
 	else:
 		return redirect('pics_list_url')
@@ -323,6 +339,11 @@ def admin_block_pic(request, id):
 		photo = get_object_or_404(Photo, id=id)
 		photo.blocked = not photo.blocked
 		photo.save()
+
+		notification = Notification.objects.create()
+		notification.user.add(photo.user)
+		notification.body = 'Admin has blocked your pic'
+		notification.save()
 	return redirect("pic_detail_url", id=id)
 
 def admin_delete_user(request, username):
@@ -471,7 +492,7 @@ class RestoreAccess(View):
 				user = User.objects.get(username = username)
 				if user.email == mail:
 					newpassword = passwordgenerator()
-					send_password_mail(newpassword, user.email)
+					send_password_mail(newpassword, user.email, user.username)
 					user.set_password(newpassword)
 					user.save()
 					return render(request, 'general/restore_access_info.html')
@@ -481,3 +502,24 @@ class RestoreAccess(View):
 				return render(request, 'general/wrong.html')
 		else:
 			return redirect('restore_access_url')
+
+def verify_user(request, username):
+	user = get_object_or_404(User, username=username)
+	send_verification_mail(user.user_add.token, user.email, user.username)
+	return render(request, 'general/verified1.html', context={'user': user})
+
+def verified_user(request, username, token):
+	user = get_object_or_404(User, username=username)
+	if user.user_add.token == token and user == request.user:
+		user.user_add.verified = True
+		user.user_add.save()
+		return render(request, 'general/verified2.html', context = {'user': user})
+	else:
+		return render(request, 'general/wrong.html')
+
+def notifications(request):
+	if request.user.is_authenticated:
+		notifications = Notification.objects.filter(user = request.user)
+		return render(request, 'general/notifications.html', context={'notifications': notifications})
+	else:
+		return redirect('pics_list_url')

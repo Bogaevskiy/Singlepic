@@ -27,7 +27,7 @@
 		<div class="card-body">
 			<h5 class="card-title">{{ photo.title }}</h5>
 			<p class="card-text"><p> {{ photo.description }} </p>
-			<p class="card-text"><p> Posted by <a href="{% url 'user_detail_url' username=photo.user.username %}">{{ photo.user.username }}</a>
+			<p class="card-text"><p> Posted by <b><a href="{% url 'user_detail_url' username=photo.user.username %}">{{ photo.user.username }}</a></b></p>
 				<p>{{ counter }} likes</p>
 				{% if request.user.is_authenticated and request.user != photo.user %}
 				{% if like_exist %}

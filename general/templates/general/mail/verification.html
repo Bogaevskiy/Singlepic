@@ -1,0 +1,12 @@
+<!DOCTYPE html>
+<html lang = "en">
+
+<head>
+</head>
+
+<body>
+	<h2>Just a little, {{ username }}...</h2> 
+	<p>Just one more step, and your account will be verified</p>
+	<p>To do this, use <a href="{% url 'verified_url' username=username token=token %}"> this link </a>
+
+</body>

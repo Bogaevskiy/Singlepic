@@ -44,9 +44,16 @@
 			{% endif %}
 			<div class="card-body">
 				<a href="{% url 'pic_detail_url' id=photo.id %}"><h5 class="card-title">{{ photo.title }}</h5></a>
-				<p class="card-text">{{ photo.description }}</p>				
-				<p class="card-text">By <a href="{% url 'user_detail_url' username=photo.user.username %}">
-				{{ photo.user.username }}</a></p>						
+				<p class="card-text">{{ photo.description }}</p>
+				{% if photo.comments_counter == 0 %}
+					<p class="card-text">No comments here</p>
+				{% elif photo.comments_counter == 1 %}
+					<p class="card-text">1 comment</p>
+				{% else %}
+					<p class="card-text">{{ photo.comments_counter }} comments</p>
+				{% endif %}				
+				<p class="card-text">By <b><a href="{% url 'user_detail_url' username=photo.user.username %}">
+				{{ photo.user.username }}</a></b></p>						
 			</div>
 		</div>
 	</div>

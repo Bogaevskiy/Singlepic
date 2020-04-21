@@ -1,0 +1,17 @@
+{% extends "general/base_general.html" %}
+
+{% block title %}
+	Logging in
+{% endblock %}
+
+{% block content %}
+	
+	<div class="card text-center card-bordered col-sm-4 col-center">  
+		<div class="card-body">
+			<h3 class="card-title"><b><h1>Congratulations!</h1></b></h3>
+			<p> Your account was successfully verified </p>
+			<a href="{% url 'user_detail_url' username=user.username %}" class="btn btn-dark btn-pad">Back to account</a>	
+		</div>
+	</div>
+
+{% endblock	%}

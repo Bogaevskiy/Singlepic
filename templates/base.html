@@ -28,9 +28,9 @@
 		<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavDropdown" aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
 			<span class="navbar-toggler-icon"></span>
 		</button>
-		<div class="collapse navbar-collapse justify-content-end" id="navbarNavDropdown">				
+		<div class="collapse navbar-collapse justify-content-end" id="navbarNavDropdown">						
 			<ul class="navbar-nav">
-				<li>
+				<li>					
 					{% if request.user.is_authenticated and request.user.is_staff  %}
 						<button type="button" class="btn btn-dark admin-obj dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
 							Admin-menu
@@ -62,6 +62,9 @@
 								<a class="nav-link" href="{% url 'pics_list_url' %}">Pics list</a>
 							</button>
 							{% if request.user.is_authenticated %}
+							<button class="dropdown-item" type="button">
+									<a class="nav-link" href="{% url 'notifications_url' %}">Notifications</a>
+								</button>
 								<button class="dropdown-item" type="button">
 									<a class="nav-link" href="{% url 'subscriptions_list_url' %}">Subscriptions</a>
 								</button>
@@ -103,9 +106,7 @@
 	<div class="container-fluid container-custom clearfix">		
 			{% block content %}
 				There is no content here for you, maybe, something went wrong
-			{% endblock	%}		
-	
-
+			{% endblock	%}
 
 	{% if is_paginated %}	
 	<nav aria-label="...">

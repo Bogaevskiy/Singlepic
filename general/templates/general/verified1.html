@@ -1,0 +1,18 @@
+{% extends "general/base_general.html" %}
+
+{% block title %}
+	Logging in
+{% endblock %}
+
+{% block content %}
+	
+	<div class="card text-center card-bordered col-sm-4 col-center">  
+		<div class="card-body">
+			
+			<p>Verification link was sent to your mail.</p>
+			<p>If everything is right, you will get it soon </p>
+			<a href="{% url 'user_detail_url' username=user.username %}" class="btn btn-dark btn-pad">Back to account</a>	
+		</div>
+	</div>
+
+{% endblock	%}

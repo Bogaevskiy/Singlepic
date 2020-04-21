@@ -1,7 +1,10 @@
 import random, string
 
 from django.core.mail import send_mail
+from django.template.loader import render_to_string
 from django.conf import settings
+
+
 
 def blockedcommentmessage():
 	messages = [
@@ -48,13 +51,16 @@ def passwordgenerator():
 		letters = letters + random.choice(string.ascii_letters)
 	return random.choice(words_list).capitalize() + str(number) + letters
 
-def send_password_mail(newpassword, email):		
+def send_password_mail(newpassword, email, username):		
 	text = "Hello again. And thank you for using our restoring access system. Your new password is {}, hope to see you back soon".format(newpassword)
+	msg = render_to_string('general/mail/restore_access.html', 
+									context = {'newpassword': newpassword, 'username': username})
 	send_mail(
 		'Singlepic - restoring access',
 		text,
 		settings.EMAIL_HOST_USER,
-		[email]
+		[email],
+		html_message = msg
 		)
 
 def tokengenerator():
@@ -63,3 +69,14 @@ def tokengenerator():
 		token += random.choice(string.ascii_letters + string.digits)
 	return token
 
+def send_verification_mail(token, email, username):
+	text = "Hello again. To verify your account, use the included link. If you don't see it, then, something went wrong."
+	msg = render_to_string('general/mail/verification.html', 
+							context = {'username': username, 'token': token})
+	send_mail(
+		'Singlepic - verification',
+		text,
+		settings.EMAIL_HOST_USER,
+		[email],
+		html_message = msg
+		)

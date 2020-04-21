@@ -27,6 +27,7 @@ class Photo(models.Model):
 	date_pub = models.DateTimeField(auto_now_add = True)
 	user = models.OneToOneField(User, on_delete = models.CASCADE)
 	blocked = models.BooleanField(default = False)
+	comments_counter = models.IntegerField(default = 0)
 
 	def __str__(self):
 		return self.title
@@ -55,3 +56,11 @@ class Comment(models.Model):
 
 	def __str__(self):
 		return '{0} com to {1}'.format(self.user.username, self.photo.title)
+
+class Notification(models.Model):
+	user = models.ManyToManyField(User)
+	body = models.TextField(max_length = 200)
+	created_at = models.DateTimeField(editable = False, default = timezone.now)
+
+	def __str__(self):
+		return 'Note {0}: "{1}..."'.format(self.id, ' '.join(self.body[:25].split(' ')[0:-1]))

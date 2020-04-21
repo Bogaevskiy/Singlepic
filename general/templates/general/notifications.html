@@ -1,0 +1,15 @@
+{% extends "general/base_general.html" %}
+
+{% block title %}
+	About project
+{% endblock %}
+
+{% block content %}	
+
+	<ul class="list-group list-group-flush">
+  		{% for note in notifications %}
+  			<li class="list-group-item"><p><i>{{note.created_at}}</i> - {{ note.body }} </p></li>
+  		{% endfor %}
+  	</ul>
+
+{% endblock %}
